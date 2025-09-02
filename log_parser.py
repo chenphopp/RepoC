@@ -1,30 +1,16 @@
-import re
-import csv
-import sys
+import re, csv, sys
 
-def parse_log(logfile, output_csv="warnings.csv"):
-    
-    pattern = re.compile(r"(.+):(\d+):\s*warning:\s*(.+)")
+pattern = re.compile(r"(.+):(\d+):\s*warning:\s*(.+)")
 
-    with open(logfile, "r", encoding="utf-8") as f, \
-         open(output_csv, "w", newline="", encoding="utf-8") as out:
-        writer = csv.writer(out)
-        writer.writerow(["Line", "File", "Message"])
+if len(sys.argv) < 2:
+    print("Usage: python log_parser.py <warnings.log>")
+    sys.exit(1)
 
-        for raw_line in f:
-            match = pattern.match(raw_line.strip())
-            if match:
-                file, lineno, msg = match.groups()
-                writer.writerow([lineno, file, msg])
-            else:
-                # ignore not standard lines
-                continue
+with open(sys.argv[1], encoding="utf-8") as f, open("warnings.csv", "w", newline="", encoding="utf-8") as out:
+    writer = csv.writer(out)
+    writer.writerow(["Line", "File", "Message"])
+    for line in f:
+        m = pattern.match(line.strip())
+        if m: writer.writerow([m.group(2), m.group(1), m.group(3)])
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python log_parser.py <warnings.log>")
-        sys.exit(1)
-
-    parse_log(sys.argv[1])
-    print("Parsing complete warnings.csv generated")
-
+print("Parsing complete: warnings.csv generated")
