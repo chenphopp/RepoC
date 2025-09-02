@@ -26,4 +26,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     parse_log(sys.argv[1])
-    print("Parsing complete → warnings.csv generated")
+    print("Parsing complete warnings.csv generated")
+
